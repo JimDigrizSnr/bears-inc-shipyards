@@ -202,7 +202,7 @@ export default function ShipsPage() {
         font-bold
         mb-4"
       >
-        Available Hulls
+        Hulls Available for Build or Immediate Delivery
       </h1>
 
       <p
