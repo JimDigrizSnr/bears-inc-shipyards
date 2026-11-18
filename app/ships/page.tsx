@@ -212,8 +212,7 @@ export default function ShipsPage() {
       >
         Browse the Bears Inc
         Shipyards catalogue
-        and request fleet
-        quotations.
+        and request quotations.
       </p>
 
       <div
