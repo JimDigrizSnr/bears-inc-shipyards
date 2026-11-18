@@ -195,16 +195,7 @@ export default function ShipPage() {
 </a>
 
 
-            <a
-              href="/contact"
-              className="
-              bg-slate-800
-              px-6
-              py-3
-              rounded-xl"
-            >
-              Contact on Slack
-            </a>
+
 
           </div>
 
