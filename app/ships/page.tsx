@@ -202,10 +202,18 @@ export default function ShipsPage() {
         font-bold
         mb-4"
       >
-        Hulls Available for Build or Immediate Delivery
+        Featured Hulls
       </h1>
 
       <p
+        className="
+        text-slate-400
+        mb-8"
+      >
+         Available for Build or Immediate Delivery if in stock
+      </p>
+
+            <p
         className="
         text-slate-400
         mb-8"
