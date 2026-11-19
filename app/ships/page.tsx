@@ -118,32 +118,17 @@ const catalogueShips =
       >
     );
 
-  const categoryOrder = [
-
-    "Corvette",
-
-    "Frigate",
-    "Navy Frigate",
-    "Assault Frigate",
-    "Interceptor",
-    "Covert Ops",
-    "Electronic Attack Ship",
-
-    "Destroyer",
-    "Tactical Destroyer",
-    "Command Destroyer",
-
-    "Cruiser",
-    "Heavy Assault Cruiser",
-    "Heavy Interdiction Cruiser",
-    "Recon Ship",
-    "Logistics",
-
-    "Strategic Cruiser",
-
-    "Battlecruiser",
-    "Combat Battlecruiser",
-    "Command Ship",
+ const categoryOrder = [
+    "Dreadnought",
+    "Carrier",
+    "Force Auxiliary",
+    "Command Carrier",
+    "Jump Freighter",
+    "Freighter",
+    "Capital Industrial Ship",
+    "Industrial Command Ship",
+    "Supercarrier",
+    "Titan",
 
     "Battleship",
     "Black Ops",
@@ -157,19 +142,29 @@ const catalogueShips =
     "Mining Barge",
     "Exhumer",
 
-    "Industrial Command Ship",
+    "Battlecruiser",
+    "Combat Battlecruiser",
+    "Command Ship",
 
-    "Freighter",
-    "Jump Freighter",
+    "Cruiser",
+    "Heavy Assault Cruiser",
+    "Heavy Interdiction Cruiser",
+    "Recon Ship",
+    "Logistics",
 
-    "Capital Industrial Ship",
+    "Strategic Cruiser",
 
-    "Carrier",
-    "Dreadnought",
-    "Force Auxiliary",
+    "Destroyer",
+    "Tactical Destroyer",
+    "Command Destroyer",
 
-    "Supercarrier",
-    "Titan"
+    "Frigate",
+    "Navy Frigate",
+    "Assault Frigate",
+    "Interceptor",
+    "Covert Ops",
+    "Electronic Attack Ship"
+
   ];
 
   const categories =
