@@ -28,12 +28,11 @@ export default function ShipsPage() {
       .then(res => res.json())
       .then((data) => {
 
-        const catalogueShips =
-          data.filter(
-            (ship: any) =>
-              ship.buildable === true &&
-              ship.player_ownable === true
-          );
+const catalogueShips =
+  data.filter(
+    (ship: any) =>
+      ship.buildable === true
+  );
 
         setShips(catalogueShips);
       });
