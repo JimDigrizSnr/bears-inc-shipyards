@@ -123,6 +123,7 @@ const catalogueShips =
     "Carrier",
     "Force Auxiliary",
     "Command Carrier",
+    "Lancer Dreadnought",
     "Jump Freighter",
     "Freighter",
     "Capital Industrial Ship",

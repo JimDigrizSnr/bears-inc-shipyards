@@ -55,10 +55,6 @@ export default function NavBar() {
   Operations Centre
 </Link>
 
-<Link href="/api/auth/logout">
-  Logout
-</Link>
-
         </div>
 
       </div>
