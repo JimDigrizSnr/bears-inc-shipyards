@@ -44,10 +44,6 @@ export default function ShipPage() {
 
   }
 
-  <h1 className="text-red-500">
-  TEST VERSION
-</h1>
-
   return (
 
     <main
@@ -68,7 +64,11 @@ export default function ShipPage() {
 
         {/* Ship Image */}
 
-        <div>
+        <div
+          className="
+          lg:sticky
+          lg:top-24"
+        >
 
           <Image
             src={ship.image_url}
@@ -92,22 +92,27 @@ export default function ShipPage() {
             className="
             text-5xl
             font-bold
-            mb-4"
+            mb-3"
           >
             {ship.name}
           </h1>
 
-          <div className="space-y-2 mb-6">
+          <div className="mb-6">
 
             <p className="text-slate-400">
+
               {ship.faction}
+
+              {ship.race !== ship.faction &&
+                ` • ${ship.race}`}
+
             </p>
 
-            <p className="text-slate-400">
-              {ship.race}
-            </p>
-
-            <p className="text-slate-400">
+            <p
+              className="
+              text-slate-400
+              mt-2"
+            >
               {ship.group_name}
             </p>
 
@@ -185,19 +190,13 @@ export default function ShipPage() {
 
           </div>
 
-          {/* Quote Panel */}
+          {/* Price & Quote */}
 
-          <div
-            className="
-            bg-slate-900
-            rounded-xl
-            p-6
-            mb-6"
-          >
+          <div className="mb-6">
 
             <div
               className="
-              text-3xl
+              text-4xl
               font-bold
               text-green-400"
             >
@@ -258,7 +257,7 @@ export default function ShipPage() {
 
           </div>
 
-          {/* Ship + Fitting Information */}
+          {/* Ship Fitting */}
 
           <div
             className="
@@ -273,7 +272,7 @@ export default function ShipPage() {
               font-bold
               mb-4"
             >
-              Ship Information
+              Ship Fitting
             </h2>
 
             <div
@@ -285,49 +284,85 @@ export default function ShipPage() {
             >
 
               <div className="text-slate-400">
-                Race
-              </div>
-              <div>{ship.race}</div>
-
-              <div className="text-slate-400">
-                Faction
-              </div>
-              <div>{ship.faction}</div>
-
-              <div className="text-slate-400">
-                Class
-              </div>
-              <div>{ship.group_name}</div>
-
-              <div className="text-slate-400">
-                Tech Level
-              </div>
-              <div>{ship.tech_level}</div>
-
-              <div className="text-slate-400">
                 High Slots
               </div>
-              <div>{ship.high_slots ?? 0}</div>
+              <div>
+                {ship.high_slots ?? 0}
+              </div>
 
               <div className="text-slate-400">
                 Mid Slots
               </div>
-              <div>{ship.mid_slots ?? 0}</div>
+              <div>
+                {ship.mid_slots ?? 0}
+              </div>
 
               <div className="text-slate-400">
                 Low Slots
               </div>
-              <div>{ship.low_slots ?? 0}</div>
+              <div>
+                {ship.low_slots ?? 0}
+              </div>
 
               <div className="text-slate-400">
                 Turrets
               </div>
-              <div>{ship.turret_hardpoints ?? 0}</div>
+              <div>
+                {ship.turret_hardpoints ?? 0}
+              </div>
 
               <div className="text-slate-400">
                 Launchers
               </div>
-              <div>{ship.launcher_hardpoints ?? 0}</div>
+              <div>
+                {ship.launcher_hardpoints ?? 0}
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Defence */}
+
+          <div
+            className="
+            bg-slate-900
+            rounded-xl
+            p-6
+            mt-6"
+          >
+
+            <h2
+              className="
+              text-xl
+              font-bold
+              mb-4"
+            >
+              Defence
+            </h2>
+
+            <div className="space-y-3">
+
+              <div>
+                🟦 Shield HP:
+                {" "}
+                {(ship.shield_hp ?? 0)
+                  .toLocaleString()}
+              </div>
+
+              <div>
+                🟨 Armour HP:
+                {" "}
+                {(ship.armor_hp ?? 0)
+                  .toLocaleString()}
+              </div>
+
+              <div>
+                🟥 Structure HP:
+                {" "}
+                {(ship.structure_hp ?? 0)
+                  .toLocaleString()}
+              </div>
 
             </div>
 
@@ -337,76 +372,31 @@ export default function ShipPage() {
 
       </div>
 
-      {/* Defence + Description */}
+      {/* Description */}
 
       <div
         className="
-        grid
-        lg:grid-cols-2
-        gap-6
+        bg-slate-900
+        rounded-xl
+        p-6
         mt-10"
       >
 
-        <div
+        <h2
           className="
-          bg-slate-900
-          rounded-xl
-          p-6"
+          text-xl
+          font-bold
+          mb-4"
         >
-
-          <h2
-            className="
-            text-xl
-            font-bold
-            mb-4"
-          >
-            Defence
-          </h2>
-
-          <div className="space-y-3">
-
-            <div>
-              Shield HP:{" "}
-              {(ship.shield_hp ?? 0)
-                .toLocaleString()}
-            </div>
-
-            <div>
-              Armour HP:{" "}
-              {(ship.armor_hp ?? 0)
-                .toLocaleString()}
-            </div>
-
-            <div>
-              Structure HP:{" "}
-              {(ship.structure_hp ?? 0)
-                .toLocaleString()}
-            </div>
-
-          </div>
-
-        </div>
+          Description
+        </h2>
 
         <div
           className="
-          bg-slate-900
-          rounded-xl
-          p-6"
+          text-slate-300
+          whitespace-pre-wrap"
         >
-
-          <h2
-            className="
-            text-xl
-            font-bold
-            mb-4"
-          >
-            Description
-          </h2>
-
-          <div className="text-slate-300">
-            {ship.description}
-          </div>
-
+          {ship.description}
         </div>
 
       </div>
