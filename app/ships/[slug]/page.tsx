@@ -257,120 +257,119 @@ export default function ShipPage() {
 
           </div>
 
-          {/* Ship Fitting */}
+<div
+  className="
+  bg-slate-900
+  rounded-xl
+  p-6"
+>
 
-          <div
-            className="
-            bg-slate-900
-            rounded-xl
-            p-6"
-          >
+  <h2
+    className="
+    text-xl
+    font-bold
+    mb-6"
+  >
+    Ship Specifications
+  </h2>
 
-            <h2
-              className="
-              text-xl
-              font-bold
-              mb-4"
-            >
-              Ship Fitting
-            </h2>
+  <div
+    className="
+    grid
+    md:grid-cols-2
+    gap-8"
+  >
 
-            <div
-              className="
-              grid
-              grid-cols-2
-              gap-x-8
-              gap-y-3"
-            >
+    <div>
 
-              <div className="text-slate-400">
-                High Slots
-              </div>
-              <div>
-                {ship.high_slots ?? 0}
-              </div>
+      <h3
+        className="
+        font-semibold
+        mb-4
+        text-slate-300"
+      >
+        Fitting
+      </h3>
 
-              <div className="text-slate-400">
-                Mid Slots
-              </div>
-              <div>
-                {ship.mid_slots ?? 0}
-              </div>
+      <div className="space-y-3">
 
-              <div className="text-slate-400">
-                Low Slots
-              </div>
-              <div>
-                {ship.low_slots ?? 0}
-              </div>
+        <div className="flex justify-between">
+          <span>High Slots</span>
+          <span>{ship.high_slots ?? 0}</span>
+        </div>
 
-              <div className="text-slate-400">
-                Turrets
-              </div>
-              <div>
-                {ship.turret_hardpoints ?? 0}
-              </div>
+        <div className="flex justify-between">
+          <span>Mid Slots</span>
+          <span>{ship.mid_slots ?? 0}</span>
+        </div>
 
-              <div className="text-slate-400">
-                Launchers
-              </div>
-              <div>
-                {ship.launcher_hardpoints ?? 0}
-              </div>
+        <div className="flex justify-between">
+          <span>Low Slots</span>
+          <span>{ship.low_slots ?? 0}</span>
+        </div>
 
-            </div>
+        <div className="flex justify-between">
+          <span>Turrets</span>
+          <span>
+            {ship.turret_hardpoints ?? 0}
+          </span>
+        </div>
 
-          </div>
-
-          {/* Defence */}
-
-          <div
-            className="
-            bg-slate-900
-            rounded-xl
-            p-6
-            mt-6"
-          >
-
-            <h2
-              className="
-              text-xl
-              font-bold
-              mb-4"
-            >
-              Defence
-            </h2>
-
-            <div className="space-y-3">
-
-              <div>
-                🟦 Shield HP:
-                {" "}
-                {(ship.shield_hp ?? 0)
-                  .toLocaleString()}
-              </div>
-
-              <div>
-                🟨 Armour HP:
-                {" "}
-                {(ship.armor_hp ?? 0)
-                  .toLocaleString()}
-              </div>
-
-              <div>
-                🟥 Structure HP:
-                {" "}
-                {(ship.structure_hp ?? 0)
-                  .toLocaleString()}
-              </div>
-
-            </div>
-
-          </div>
-
+        <div className="flex justify-between">
+          <span>Launchers</span>
+          <span>
+            {ship.launcher_hardpoints ?? 0}
+          </span>
         </div>
 
       </div>
+
+    </div>
+
+    <div>
+
+      <h3
+        className="
+        font-semibold
+        mb-4
+        text-slate-300"
+      >
+        Defence
+      </h3>
+
+      <div className="space-y-3">
+
+        <div className="flex justify-between">
+          <span>🟦 Shield HP</span>
+          <span>
+            {(ship.shield_hp ?? 0)
+              .toLocaleString()}
+          </span>
+        </div>
+
+        <div className="flex justify-between">
+          <span>🟨 Armour HP</span>
+          <span>
+            {(ship.armor_hp ?? 0)
+              .toLocaleString()}
+          </span>
+        </div>
+
+        <div className="flex justify-between">
+          <span>🟥 Structure HP</span>
+          <span>
+            {(ship.structure_hp ?? 0)
+              .toLocaleString()}
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 
       {/* Description */}
 
