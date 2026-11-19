@@ -371,6 +371,10 @@ export default function ShipPage() {
 
 </div>
 
+</div>
+
+</div>
+
       {/* Description */}
 
       <div
