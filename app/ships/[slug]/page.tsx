@@ -37,17 +37,11 @@ export default function ShipPage() {
   if (!ship) {
 
     return (
-
-      <main
-        className="
-        max-w-7xl
-        mx-auto
-        p-8"
-      >
+      <main className="max-w-7xl mx-auto p-8">
         Loading Ship...
       </main>
-
     );
+
   }
 
   return (
@@ -68,7 +62,7 @@ export default function ShipPage() {
         items-start"
       >
 
-        {/* Ship Render */}
+        {/* Ship Image */}
 
         <div>
 
@@ -86,7 +80,7 @@ export default function ShipPage() {
 
         </div>
 
-        {/* Ship Details */}
+        {/* Right Column */}
 
         <div>
 
@@ -117,7 +111,13 @@ export default function ShipPage() {
 
           {/* Status Badges */}
 
-          <div className="flex flex-wrap gap-2 mb-6">
+          <div
+            className="
+            flex
+            flex-wrap
+            gap-2
+            mb-6"
+          >
 
             <span
               className="
@@ -181,7 +181,7 @@ export default function ShipPage() {
 
           </div>
 
-          {/* Ship Information */}
+          {/* Quote Panel */}
 
           <div
             className="
@@ -189,6 +189,78 @@ export default function ShipPage() {
             rounded-xl
             p-6
             mb-6"
+          >
+
+            <div
+              className="
+              text-3xl
+              font-bold
+              text-green-400"
+            >
+              {(ship.price ?? 0)
+                .toLocaleString()}
+              {" "}
+              ISK
+            </div>
+
+            {(ship.stock ?? 0) > 10 ? (
+
+              <p
+                className="
+                mt-2
+                text-green-400"
+              >
+                ✅ In Stock ({ship.stock})
+              </p>
+
+            ) : (ship.stock ?? 0) > 0 ? (
+
+              <p
+                className="
+                mt-2
+                text-yellow-400"
+              >
+                🟡 Limited Stock ({ship.stock})
+              </p>
+
+            ) : (
+
+              <p
+                className="
+                mt-2
+                text-blue-400"
+              >
+                Build To Order
+              </p>
+
+            )}
+
+            <a
+              href={`/quote-request?ship=${encodeURIComponent(
+                ship.name
+              )}`}
+              className="
+              inline-block
+              mt-4
+              bg-amber-400
+              text-black
+              px-6
+              py-3
+              rounded-xl
+              font-bold"
+            >
+              Request Quote
+            </a>
+
+          </div>
+
+          {/* Ship + Fitting Information */}
+
+          <div
+            className="
+            bg-slate-900
+            rounded-xl
+            p-6"
           >
 
             <h2
@@ -200,223 +272,135 @@ export default function ShipPage() {
               Ship Information
             </h2>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div
+              className="
+              grid
+              grid-cols-2
+              gap-x-8
+              gap-y-3"
+            >
 
               <div className="text-slate-400">
                 Race
               </div>
-
-              <div>
-                {ship.race}
-              </div>
+              <div>{ship.race}</div>
 
               <div className="text-slate-400">
                 Faction
               </div>
-
-              <div>
-                {ship.faction}
-              </div>
+              <div>{ship.faction}</div>
 
               <div className="text-slate-400">
-                Hull Class
+                Class
               </div>
-
-              <div>
-                {ship.group_name}
-              </div>
+              <div>{ship.group_name}</div>
 
               <div className="text-slate-400">
                 Tech Level
               </div>
-
-              <div>
-                {ship.tech_level}
-              </div>
+              <div>{ship.tech_level}</div>
 
               <div className="text-slate-400">
-                Buildable
-              </div>
-
-              <div>
-                {ship.buildable
-                  ? "Yes"
-                  : "No"}
-              </div>
-
-              <div className="text-slate-400">
-                Capital Ship
-              </div>
-
-              <div>
-                {ship.is_capital
-                  ? "Yes"
-                  : "No"}
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* Fitting Layout */}
-
-          <div
-            className="
-            bg-slate-900
-            rounded-xl
-            p-6
-            mb-6"
-          >
-
-            <h2
-              className="
-              text-xl
-              font-bold
-              mb-4"
-            >
-              Fitting Layout
-            </h2>
-
-            <div className="grid grid-cols-2 gap-3">
-
-              <div>
                 High Slots
               </div>
+              <div>{ship.high_slots ?? 0}</div>
 
-              <div>
-                {ship.high_slots ?? 0}
-              </div>
-
-              <div>
+              <div className="text-slate-400">
                 Mid Slots
               </div>
+              <div>{ship.mid_slots ?? 0}</div>
 
-              <div>
-                {ship.mid_slots ?? 0}
-              </div>
-
-              <div>
+              <div className="text-slate-400">
                 Low Slots
               </div>
+              <div>{ship.low_slots ?? 0}</div>
 
-              <div>
-                {ship.low_slots ?? 0}
+              <div className="text-slate-400">
+                Turrets
               </div>
+              <div>{ship.turret_hardpoints ?? 0}</div>
 
-              <div>
-                Turret Hardpoints
+              <div className="text-slate-400">
+                Launchers
               </div>
-
-              <div>
-                {ship.turret_hardpoints ?? 0}
-              </div>
-
-              <div>
-                Launcher Hardpoints
-              </div>
-
-              <div>
-                {ship.launcher_hardpoints ?? 0}
-              </div>
+              <div>{ship.launcher_hardpoints ?? 0}</div>
 
             </div>
 
           </div>
 
-          {/* Defence */}
+        </div>
 
-          <div
+      </div>
+
+      {/* Defence + Description */}
+
+      <div
+        className="
+        grid
+        lg:grid-cols-2
+        gap-6
+        mt-10"
+      >
+
+        <div
+          className="
+          bg-slate-900
+          rounded-xl
+          p-6"
+        >
+
+          <h2
             className="
-            bg-slate-900
-            rounded-xl
-            p-6
-            mb-6"
+            text-xl
+            font-bold
+            mb-4"
           >
+            Defence
+          </h2>
 
-            <h2
-              className="
-              text-xl
-              font-bold
-              mb-4"
-            >
-              Defence
-            </h2>
+          <div className="space-y-3">
 
-            <div className="grid grid-cols-2 gap-3">
+            <div>
+              Shield HP:{" "}
+              {(ship.shield_hp ?? 0)
+                .toLocaleString()}
+            </div>
 
-              <div>
-                Shield HP
-              </div>
+            <div>
+              Armour HP:{" "}
+              {(ship.armor_hp ?? 0)
+                .toLocaleString()}
+            </div>
 
-              <div>
-                {(ship.shield_hp ?? 0)
-                  .toLocaleString()}
-              </div>
-
-              <div>
-                Armour HP
-              </div>
-
-              <div>
-                {(ship.armor_hp ?? 0)
-                  .toLocaleString()}
-              </div>
-
-              <div>
-                Structure HP
-              </div>
-
-              <div>
-                {(ship.structure_hp ?? 0)
-                  .toLocaleString()}
-              </div>
-
+            <div>
+              Structure HP:{" "}
+              {(ship.structure_hp ?? 0)
+                .toLocaleString()}
             </div>
 
           </div>
 
-          {/* Description */}
+        </div>
 
-          <div
+        <div
+          className="
+          bg-slate-900
+          rounded-xl
+          p-6"
+        >
+
+          <h2
             className="
-            prose
-            prose-invert
-            max-w-none"
+            text-xl
+            font-bold
+            mb-4"
           >
+            Description
+          </h2>
 
-            <p>
-              {ship.description}
-            </p>
-
-          </div>
-
-          {/* Actions */}
-
-          <div
-            className="
-            mt-8
-            flex
-            flex-wrap
-            gap-4"
-          >
-
-            <a
-              href={
-                `/quote-request?ship=${encodeURIComponent(
-                  ship.name
-                )}`
-              }
-              className="
-              bg-amber-400
-              text-black
-              px-6
-              py-3
-              rounded-xl
-              font-bold"
-            >
-              Request Quote
-            </a>
-
+          <div className="text-slate-300">
+            {ship.description}
           </div>
 
         </div>

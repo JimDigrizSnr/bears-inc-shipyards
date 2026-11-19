@@ -112,9 +112,11 @@ export default function ShipCard({
 }: any) {
 
   return (
+
     <Link
       href={`/ships/${ship.slug}`}
     >
+
       <div
         className={`
           bg-eve-surface
@@ -264,10 +266,62 @@ export default function ShipCard({
             text-slate-500"
           >
             Shield{" "}
-            {(ship.shield_hp ?? 0).toLocaleString()}
+            {(ship.shield_hp ?? 0)
+              .toLocaleString()}
             {" • "}
             Armour{" "}
-            {(ship.armor_hp ?? 0).toLocaleString()}
+            {(ship.armor_hp ?? 0)
+              .toLocaleString()}
+          </div>
+
+          {/* Price & Availability */}
+
+          <div className="mt-4">
+
+            <p
+              className="
+              text-green-400
+              font-bold
+              text-lg"
+            >
+              {(ship.price ?? 0)
+                .toLocaleString()}
+              {" "}
+              ISK
+            </p>
+
+            {(ship.stock ?? 0) > 10 ? (
+
+              <p
+                className="
+                text-green-400
+                text-sm"
+              >
+                ✅ In Stock ({ship.stock})
+              </p>
+
+            ) : (ship.stock ?? 0) > 0 ? (
+
+              <p
+                className="
+                text-yellow-400
+                text-sm"
+              >
+                🟡 Limited Stock ({ship.stock})
+              </p>
+
+            ) : (
+
+              <p
+                className="
+                text-blue-400
+                text-sm"
+              >
+                Build To Order
+              </p>
+
+            )}
+
           </div>
 
           <div
@@ -282,6 +336,8 @@ export default function ShipCard({
         </div>
 
       </div>
+
     </Link>
+
   );
 }
