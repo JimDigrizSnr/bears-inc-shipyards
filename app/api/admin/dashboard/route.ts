@@ -1,17 +1,18 @@
 // app/api/admin/dashboard/route.ts
 
-import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE!
-)
+);
 
 export async function GET() {
 
   const [
     shipsResult,
+    eveShipsResult,
     quotesResult,
     jobsResult
   ] = await Promise.all([
@@ -21,6 +22,14 @@ export async function GET() {
       .select("*"),
 
     supabase
+      .from("eve_ships")
+      .select(`
+        buildable,
+        is_capital,
+        tech_level
+      `),
+
+    supabase
       .from("fleet_quotes")
       .select("*"),
 
@@ -28,33 +37,36 @@ export async function GET() {
       .from("production_jobs")
       .select("*")
 
-  ])
+  ]);
 
   const ships =
-    shipsResult.data ?? []
+    shipsResult.data ?? [];
+
+  const eveShips =
+    eveShipsResult.data ?? [];
 
   const quotes =
-    quotesResult.data ?? []
+    quotesResult.data ?? [];
 
   const jobs =
-    jobsResult.data ?? []
+    jobsResult.data ?? [];
 
   const activeShips =
     ships.filter(
       ship => ship.active
-    ).length
+    ).length;
 
   const inventoryItems =
     ships.filter(
       ship => ship.active
-    ).length
+    ).length;
 
   const totalStock =
     ships.reduce(
       (sum, ship) =>
         sum + (ship.stock ?? 0),
       0
-    )
+    );
 
   const inventoryValue =
     ships.reduce(
@@ -65,35 +77,75 @@ export async function GET() {
           (ship.price ?? 0)
         ),
       0
-    )
+    );
+
+  const totalShipDesigns =
+    eveShips.length;
+
+  const buildableShips =
+    eveShips.filter(
+      ship => ship.buildable
+    ).length;
+
+  const capitalShips =
+    eveShips.filter(
+      ship => ship.is_capital
+    ).length;
+
+  const tech1Ships =
+    eveShips.filter(
+      ship =>
+        ship.tech_level ===
+        "Tech I"
+    ).length;
+
+  const tech2Ships =
+    eveShips.filter(
+      ship =>
+        ship.tech_level ===
+        "Tech II"
+    ).length;
+
+  const tech3Ships =
+    eveShips.filter(
+      ship =>
+        ship.tech_level ===
+        "Tech III"
+    ).length;
+
+  const featuredShips =
+    ships.filter(
+      ship =>
+        ship.featured === true
+    ).length;
 
   const openQuotes =
     quotes.filter(
       quote =>
         quote.status !==
         "Delivered"
-    ).length
+    ).length;
 
   const deliveredQuotes =
     quotes.filter(
       quote =>
         quote.status ===
         "Delivered"
-    ).length
+    ).length;
 
   const pendingJobs =
     jobs.filter(
       job =>
         job.status !==
         "Completed"
-    ).length
+    ).length;
 
   const completedJobs =
     jobs.filter(
       job =>
         job.status ===
         "Completed"
-    ).length
+    ).length;
 
   const recentQuotes =
     [...quotes]
@@ -107,7 +159,7 @@ export async function GET() {
             a.created_at
           ).getTime()
       )
-      .slice(0, 5)
+      .slice(0, 5);
 
   const recentJobs =
     [...jobs]
@@ -121,7 +173,7 @@ export async function GET() {
             a.created_at
           ).getTime()
       )
-      .slice(0, 5)
+      .slice(0, 5);
 
   const lowStockShips =
     ships
@@ -135,7 +187,7 @@ export async function GET() {
           (a.stock ?? 0) -
           (b.stock ?? 0)
       )
-      .slice(0, 10)
+      .slice(0, 10);
 
   const bottlenecks =
     jobs
@@ -144,9 +196,10 @@ export async function GET() {
           job.status !==
             "Completed"
           &&
-          (job.progress ?? 0) < 25
+          (job.progress ?? 0) <
+            25
       )
-      .slice(0, 10)
+      .slice(0, 10);
 
   const activityFeed = [
 
@@ -201,9 +254,11 @@ export async function GET() {
           a.created_at
         ).getTime()
     )
-    .slice(0, 10)
+    .slice(0, 10);
 
   return NextResponse.json({
+
+    // Inventory
 
     activeShips,
 
@@ -213,13 +268,35 @@ export async function GET() {
 
     inventoryValue,
 
+    // SDE Statistics
+
+    totalShipDesigns,
+
+    buildableShips,
+
+    capitalShips,
+
+    tech1Ships,
+
+    tech2Ships,
+
+    tech3Ships,
+
+    featuredShips,
+
+    // Quotes
+
     openQuotes,
 
     deliveredQuotes,
 
+    // Production
+
     pendingJobs,
 
     completedJobs,
+
+    // Dashboard Lists
 
     recentQuotes,
 
@@ -231,6 +308,6 @@ export async function GET() {
 
     activityFeed
 
-  })
+  });
 
 }

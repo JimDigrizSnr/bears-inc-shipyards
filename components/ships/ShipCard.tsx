@@ -1,10 +1,10 @@
-import Image from "next/image"
-import Link from "next/link"
+import Image from "next/image";
+import Link from "next/link";
 
 function FactionBadge({
   faction,
 }: {
-  faction: string
+  faction: string;
 }) {
   const styles: Record<string, string> = {
     "Caldari State":
@@ -24,7 +24,7 @@ function FactionBadge({
 
     Pirate:
       "bg-purple-900 text-purple-300",
-  }
+  };
 
   const logos: Record<string, string> = {
     "Caldari State":
@@ -44,10 +44,9 @@ function FactionBadge({
 
     Pirate:
       "/factions/pirate.png",
-  }
+  };
 
   return (
-
     <span
       className={`
         inline-flex
@@ -64,7 +63,6 @@ function FactionBadge({
         }
       `}
     >
-
       <Image
         src={
           logos[faction] ??
@@ -77,41 +75,36 @@ function FactionBadge({
       />
 
       {faction}
-
     </span>
-
-  )
+  );
 }
 
 function getFactionBorder(
   faction: string
 ) {
-
   switch (faction) {
 
     case "Caldari State":
-      return "hover:border-blue-500"
+      return "hover:border-blue-500";
 
     case "Amarr Empire":
-      return "hover:border-yellow-500"
+      return "hover:border-yellow-500";
 
     case "Gallente Federation":
-      return "hover:border-green-500"
+      return "hover:border-green-500";
 
     case "Minmatar Republic":
-      return "hover:border-red-500"
+      return "hover:border-red-500";
 
     case "ORE":
-      return "hover:border-orange-500"
+      return "hover:border-orange-500";
 
     case "Pirate":
-      return "hover:border-purple-500"
+      return "hover:border-purple-500";
 
     default:
-      return "hover:border-eve-accent"
-
+      return "hover:border-eve-accent";
   }
-
 }
 
 export default function ShipCard({
@@ -119,11 +112,9 @@ export default function ShipCard({
 }: any) {
 
   return (
-
     <Link
       href={`/ships/${ship.slug}`}
     >
-
       <div
         className={`
           bg-eve-surface
@@ -187,12 +178,14 @@ export default function ShipCard({
           </h3>
 
           <div className="mt-2">
-
             <FactionBadge
               faction={ship.faction}
             />
-
           </div>
+
+          <p className="mt-2 text-sm text-slate-400">
+            {ship.race}
+          </p>
 
           <span
             className="
@@ -204,34 +197,77 @@ export default function ShipCard({
             bg-slate-800
             rounded"
           >
-            {ship.hull_class ??
-              ship.category}
+            {ship.group_name}
           </span>
 
-          <div className="mt-4">
+          <div className="mt-4 flex flex-wrap gap-2">
 
-            <p
+            <span
               className="
-              text-green-400
-              font-semibold"
+              px-2
+              py-1
+              rounded
+              bg-blue-900
+              text-blue-300
+              text-xs"
             >
-              {ship.price.toLocaleString()}
-              {" "}
-              ISK
-            </p>
+              {ship.tech_level}
+            </span>
 
-            <p
-              className={
-                ship.stock > 10
-                  ? "text-green-400"
-                  : ship.stock > 0
-                  ? "text-yellow-400"
-                  : "text-red-400"
-              }
-            >
-              Stock: {ship.stock}
-            </p>
+            {ship.is_capital && (
+              <span
+                className="
+                px-2
+                py-1
+                rounded
+                bg-red-900
+                text-red-300
+                text-xs"
+              >
+                Capital
+              </span>
+            )}
 
+            {ship.is_industrial && (
+              <span
+                className="
+                px-2
+                py-1
+                rounded
+                bg-orange-900
+                text-orange-300
+                text-xs"
+              >
+                Industrial
+              </span>
+            )}
+
+          </div>
+
+          <div
+            className="
+            mt-4
+            text-sm
+            text-slate-400"
+          >
+            H {ship.high_slots ?? 0}
+            {" • "}
+            M {ship.mid_slots ?? 0}
+            {" • "}
+            L {ship.low_slots ?? 0}
+          </div>
+
+          <div
+            className="
+            mt-3
+            text-sm
+            text-slate-500"
+          >
+            Shield{" "}
+            {(ship.shield_hp ?? 0).toLocaleString()}
+            {" • "}
+            Armour{" "}
+            {(ship.armor_hp ?? 0).toLocaleString()}
           </div>
 
           <div
@@ -246,9 +282,6 @@ export default function ShipCard({
         </div>
 
       </div>
-
     </Link>
-
-  )
-
+  );
 }

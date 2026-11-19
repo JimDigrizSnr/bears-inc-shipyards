@@ -1,21 +1,38 @@
-import Link from "next/link"
-import Image from "next/image"
-import { cookies } from "next/headers"
+import Link from "next/link";
+import Image from "next/image";
+import { cookies } from "next/headers";
+import { createClient } from "@supabase/supabase-js";
 
 export default async function HomePage() {
 
   const cookieStore =
-    await cookies()
+    await cookies();
 
   const characterName =
     cookieStore.get(
       "character_name"
-    )?.value
+    )?.value;
 
   const characterId =
     cookieStore.get(
       "character_id"
-    )?.value
+    )?.value;
+
+  const supabase =
+    createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE!
+    );
+
+  const { data: ships } =
+    await supabase
+      .from("eve_ships")
+      .select("buildable");
+
+  const buildableShips =
+    ships?.filter(
+      ship => ship.buildable
+    ).length ?? 0;
 
   return (
 
@@ -61,11 +78,10 @@ export default async function HomePage() {
             {characterId && (
 
               <img
-                src={
-                  `https://images.evetech.net/characters/${characterId}/portrait?size=256`
-                }
+                src={`https://images.evetech.net/characters/${characterId}/portrait?size=256`}
                 alt={
-                  characterName
+                  characterName ??
+                  "Pilot"
                 }
                 className="
                 w-32
@@ -102,7 +118,9 @@ export default async function HomePage() {
                 className="
                 text-slate-400"
               >
-                Alliance Verified Pilot
+                Access to the Bears Inc
+                Procurement and
+                Manufacturing Network
               </p>
 
             </div>
@@ -111,32 +129,30 @@ export default async function HomePage() {
 
           {/* Logo */}
 
-{/* Logo */}
+          <div
+            className="
+            flex
+            justify-center
+            lg:justify-end"
+          >
 
-<div
-  className="
-  flex
-  justify-center
-  lg:justify-end"
->
+            <Image
+              src="/logo.png"
+              alt="Bears Inc Shipyards"
+              width={300}
+              height={300}
+              priority
+              className="
+              w-32
+              h-32
+              md:w-40
+              md:h-40
+              lg:w-56
+              lg:h-56
+              object-contain"
+            />
 
-  <Image
-    src="/logo.png"
-    alt="Bears Inc Shipyards"
-    width={300}
-    height={300}
-    priority
-    className="
-    w-32
-    h-32
-    md:w-40
-    md:h-40
-    lg:w-56
-    lg:h-56
-    object-contain"
-  />
-
-</div>
+          </div>
 
         </div>
 
@@ -155,29 +171,32 @@ export default async function HomePage() {
         <DashboardCard
           title="Browse Ships"
           description="
-          View available hulls and procurement options."
+          Browse over 400 manufacturable
+          hulls from frigates to capitals."
           href="/ships"
         />
 
         <DashboardCard
           title="Request a Quote"
-
-description="
-Request any buildable hull from across New Eden."
-href="/blind-quote-request"
+          description="
+          Request pricing and production
+          estimates for any buildable hull."
+          href="/blind-quote-request"
         />
 
         <DashboardCard
           title="My Quotes"
           description="
-          Track active and completed quotation requests."
+          Track active and completed
+          quotation requests."
           href="/quotes"
         />
 
         <DashboardCard
           title="Production Jobs"
           description="
-          View manufacturing progress and deliveries."
+          View manufacturing progress
+          and delivery schedules."
           href="/production"
         />
 
@@ -199,8 +218,10 @@ href="/blind-quote-request"
         />
 
         <InfoCard
-          title="Authentication"
-          value="CCP SSO"
+          title="Buildable Hulls"
+          value={
+            buildableShips.toString()
+          }
         />
 
         <InfoCard
@@ -212,8 +233,7 @@ href="/blind-quote-request"
 
     </main>
 
-  )
-
+  );
 }
 
 function DashboardCard({
@@ -221,9 +241,9 @@ function DashboardCard({
   description,
   href
 }: {
-  title: string
-  description: string
-  href: string
+  title: string;
+  description: string;
+  href: string;
 }) {
 
   return (
@@ -262,16 +282,15 @@ function DashboardCard({
 
     </Link>
 
-  )
-
+  );
 }
 
 function InfoCard({
   title,
   value
 }: {
-  title: string
-  value: string
+  title: string;
+  value: string;
 }) {
 
   return (
@@ -303,6 +322,5 @@ function InfoCard({
 
     </div>
 
-  )
-
+  );
 }

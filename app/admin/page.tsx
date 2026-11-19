@@ -90,7 +90,7 @@ export default function OperationsCentre() {
           </div>
 
           <div>
-            Catalogue Ships
+            Active Catalogue Ships
           </div>
 
         </div>
@@ -206,6 +206,98 @@ export default function OperationsCentre() {
         </div>
 
       </div>
+
+      {/* Shipyard Statistics */}
+
+<div
+  className="
+  grid
+  md:grid-cols-4
+  gap-4
+  mb-10"
+>
+
+  <div
+    className="
+    bg-slate-900
+    rounded-xl
+    p-4"
+  >
+    <div
+      className="
+      text-3xl
+      font-bold
+      text-eve-accent"
+    >
+      {stats.totalShipDesigns}
+    </div>
+
+    <div>
+      Ship Designs
+    </div>
+  </div>
+
+  <div
+    className="
+    bg-slate-900
+    rounded-xl
+    p-4"
+  >
+    <div
+      className="
+      text-3xl
+      font-bold
+      text-green-400"
+    >
+      {stats.buildableShips}
+    </div>
+
+    <div>
+      Buildable Hulls
+    </div>
+  </div>
+
+  <div
+    className="
+    bg-slate-900
+    rounded-xl
+    p-4"
+  >
+    <div
+      className="
+      text-3xl
+      font-bold
+      text-red-400"
+    >
+      {stats.capitalShips}
+    </div>
+
+    <div>
+      Capital Hulls
+    </div>
+  </div>
+
+  <div
+    className="
+    bg-slate-900
+    rounded-xl
+    p-4"
+  >
+    <div
+      className="
+      text-3xl
+      font-bold
+      text-blue-400"
+    >
+      {stats.tech3Ships}
+    </div>
+
+    <div>
+      Tech III Hulls
+    </div>
+  </div>
+
+</div>
 
       {/* Inventory Summary */}
 

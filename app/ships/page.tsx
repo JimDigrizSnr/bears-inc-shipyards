@@ -1,190 +1,209 @@
-// app/ships/page.tsx
+"use client";
 
-"use client"
-
-import { useEffect, useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
+import { useEffect, useState } from "react";
+import ShipCard from "@/components/ships/ShipCard";
 
 export default function ShipsPage() {
-
   const [ships, setShips] =
-    useState<any[]>([])
+    useState<any[]>([]);
 
   const [search, setSearch] =
-    useState("")
+    useState("");
 
   const [factionFilter,
     setFactionFilter] =
-    useState("All")
+    useState("All");
+
+  const [techFilter,
+    setTechFilter] =
+    useState("All");
+
+  const [capitalFilter,
+    setCapitalFilter] =
+    useState("All");
 
   useEffect(() => {
 
     fetch("/api/ships")
-      .then(
-        res => res.json()
-      )
-      .then(
-        setShips
-      )
+      .then(res => res.json())
+      .then((data) => {
 
-  }, [])
+        const catalogueShips =
+          data.filter(
+            (ship: any) =>
+              ship.buildable === true &&
+              ship.player_ownable === true
+          );
+
+        setShips(catalogueShips);
+      });
+
+  }, []);
 
   const factions = [
-
     "All",
-
     ...new Set(
       ships
         .map(
-          ship =>
-            ship.faction
+          ship => ship.faction
         )
         .filter(Boolean)
     )
-
-  ]
+  ];
 
   const filteredShips =
-    ships.filter(
-      ship => {
+    ships.filter((ship) => {
 
-        const matchesSearch =
+      const matchesSearch =
+        ship.name
+          ?.toLowerCase()
+          .includes(
+            search.toLowerCase()
+          );
 
-          ship.name
-            .toLowerCase()
-            .includes(
-              search.toLowerCase()
-            )
+      const matchesFaction =
+        factionFilter === "All"
+        ||
+        ship.faction ===
+        factionFilter;
 
-        const matchesFaction =
+      const matchesTech =
+        techFilter === "All"
+        ||
+        ship.tech_level ===
+        techFilter;
 
-          factionFilter ===
-            "All"
+      const matchesCapital =
 
-          ||
+        capitalFilter === "All"
 
-          ship.faction ===
-            factionFilter
+          ? true
 
-        return (
-          matchesSearch &&
-          matchesFaction
-        )
+          : capitalFilter ===
+              "Capital"
 
-      }
-    )
+          ? ship.is_capital
+
+          : !ship.is_capital;
+
+      return (
+        matchesSearch &&
+        matchesFaction &&
+        matchesTech &&
+        matchesCapital
+      );
+
+    });
 
   const groupedShips =
     filteredShips.reduce(
       (groups, ship) => {
 
         const category =
+          ship.group_name ??
           ship.hull_class ??
-          "Other"
+          "Other";
 
-        if (
-          !groups[category]
-        ) {
-
-          groups[
-            category
-          ] = []
-
+        if (!groups[category]) {
+          groups[category] = [];
         }
 
-        groups[
-          category
-        ].push(ship)
+        groups[category].push(ship);
 
-        return groups
+        return groups;
 
       },
-
       {} as Record<
         string,
         any[]
       >
-    )
+    );
 
   const categoryOrder = [
 
     "Corvette",
 
     "Frigate",
+    "Navy Frigate",
+    "Assault Frigate",
+    "Interceptor",
+    "Covert Ops",
+    "Electronic Attack Ship",
 
     "Destroyer",
+    "Tactical Destroyer",
+    "Command Destroyer",
 
     "Cruiser",
+    "Heavy Assault Cruiser",
+    "Heavy Interdiction Cruiser",
+    "Recon Ship",
+    "Logistics",
+
+    "Strategic Cruiser",
 
     "Battlecruiser",
+    "Combat Battlecruiser",
+    "Command Ship",
 
     "Battleship",
+    "Black Ops",
+    "Marauder",
 
     "Industrial",
+    "Transport Ship",
+    "Blockade Runner",
+    "Deep Space Transport",
 
     "Mining Barge",
-
     "Exhumer",
 
-    "Freighter",
+    "Industrial Command Ship",
 
-    "Dreadnought",
+    "Freighter",
+    "Jump Freighter",
+
+    "Capital Industrial Ship",
 
     "Carrier",
-
+    "Dreadnought",
     "Force Auxiliary",
 
     "Supercarrier",
-
     "Titan"
-
-  ]
+  ];
 
   const categories =
     Object.keys(
       groupedShips
-    ).sort(
-      (a, b) => {
+    ).sort((a, b) => {
 
-        const aIndex =
-          categoryOrder.indexOf(
-            a
-          )
+      const aIndex =
+        categoryOrder.indexOf(a);
 
-        const bIndex =
-          categoryOrder.indexOf(
-            b
-          )
+      const bIndex =
+        categoryOrder.indexOf(b);
 
-        if (
-          aIndex === -1 &&
-          bIndex === -1
-        ) {
-          return a.localeCompare(
-            b
-          )
-        }
-
-        if (
-          aIndex === -1
-        ) {
-          return 1
-        }
-
-        if (
-          bIndex === -1
-        ) {
-          return -1
-        }
-
-        return (
-          aIndex -
-          bIndex
-        )
-
+      if (
+        aIndex === -1 &&
+        bIndex === -1
+      ) {
+        return a.localeCompare(b);
       }
-    )
+
+      if (aIndex === -1) {
+        return 1;
+      }
+
+      if (bIndex === -1) {
+        return -1;
+      }
+
+      return (
+        aIndex - bIndex
+      );
+
+    });
 
   return (
 
@@ -202,31 +221,46 @@ export default function ShipsPage() {
         font-bold
         mb-4"
       >
-        Featured Hulls
+        Bears Inc Ship Catalogue
       </h1>
 
       <p
         className="
         text-slate-400
-        mb-8"
+        mb-3"
       >
-         Available for Build or Immediate Delivery if in stock
+        Browse all ships currently
+        available for manufacture
+        through Bears Inc Shipyards.
       </p>
 
-            <p
+      <p
         className="
-        text-slate-400
+        text-slate-500
         mb-8"
       >
-        Browse the Bears Inc
-        Shipyards catalogue
-        and request quotations.
+        Search, compare and request
+        quotations for over
+        400 manufacturable ship hulls.
       </p>
 
       <div
         className="
+        mb-8
+        text-amber-400
+        font-semibold"
+      >
+        {filteredShips.length}
+        {" "}
+        Ships Available
+      </div>
+
+      {/* Filters */}
+
+      <div
+        className="
         grid
-        md:grid-cols-2
+        md:grid-cols-4
         gap-4
         mb-8"
       >
@@ -247,9 +281,7 @@ export default function ShipsPage() {
         />
 
         <select
-          value={
-            factionFilter
-          }
+          value={factionFilter}
           onChange={(e) =>
             setFactionFilter(
               e.target.value
@@ -260,18 +292,71 @@ export default function ShipsPage() {
           rounded-xl
           bg-slate-900"
         >
-
           {factions.map(
             faction => (
-
               <option
                 key={faction}
               >
                 {faction}
               </option>
+          ))}
+        </select>
 
+        <select
+          value={techFilter}
+          onChange={(e) =>
+            setTechFilter(
+              e.target.value
             )
-          )}
+          }
+          className="
+          p-4
+          rounded-xl
+          bg-slate-900"
+        >
+          <option>
+            All
+          </option>
+
+          <option>
+            Tech I
+          </option>
+
+          <option>
+            Tech II
+          </option>
+
+          <option>
+            Tech III
+          </option>
+
+        </select>
+
+        <select
+          value={
+            capitalFilter
+          }
+          onChange={(e) =>
+            setCapitalFilter(
+              e.target.value
+            )
+          }
+          className="
+          p-4
+          rounded-xl
+          bg-slate-900"
+        >
+          <option>
+            All
+          </option>
+
+          <option>
+            Capital
+          </option>
+
+          <option>
+            Subcapital
+          </option>
 
         </select>
 
@@ -288,7 +373,7 @@ export default function ShipsPage() {
       >
 
         {categories.map(
-          category => (
+          (category) => (
 
             <a
               key={category}
@@ -311,6 +396,7 @@ export default function ShipsPage() {
                 ].length
               }
               )
+
             </a>
 
           )
@@ -318,8 +404,10 @@ export default function ShipsPage() {
 
       </div>
 
+      {/* Ship Categories */}
+
       {categories.map(
-        category => (
+        (category) => (
 
           <section
             id={category}
@@ -352,95 +440,12 @@ export default function ShipsPage() {
               {groupedShips[
                 category
               ].map(
-                ship => (
+                (ship) => (
 
-                  <Link
+                  <ShipCard
                     key={ship.id}
-                    href={
-                      `/ships/${ship.slug}`
-                    }
-                  >
-
-                    <div
-                      className="
-                      bg-slate-900
-                      rounded-xl
-                      overflow-hidden
-                      hover:border
-                      hover:border-amber-400
-                      transition"
-                    >
-
-                      <div
-                        className="
-                        h-56"
-                      >
-
-                        <Image
-                          src={
-                            ship.image_url
-                          }
-                          alt={
-                            ship.name
-                          }
-                          width={512}
-                          height={512}
-                          className="
-                          h-full
-                          w-full
-                          object-contain
-                          p-4"
-                        />
-
-                      </div>
-
-                      <div
-                        className="
-                        p-4"
-                      >
-
-                        <h3
-                          className="
-                          text-lg
-                          font-bold"
-                        >
-                          {ship.name}
-                        </h3>
-
-                        <p
-                          className="
-                          text-sm
-                          text-slate-400"
-                        >
-                          {ship.faction}
-                        </p>
-
-                        <p
-                          className="
-                          mt-3
-                          text-green-400"
-                        >
-                          {ship.stock}
-                          {" "}
-                          in stock
-                        </p>
-
-                        <p
-                          className="
-                          mt-2
-                          text-amber-400
-                          font-bold"
-                        >
-                          {ship.price?.toLocaleString()}
-                          {" "}
-                          ISK
-                        </p>
-
-                      </div>
-
-                    </div>
-
-                  </Link>
+                    ship={ship}
+                  />
 
                 )
               )}
@@ -453,7 +458,5 @@ export default function ShipsPage() {
       )}
 
     </main>
-
-  )
-
+  );
 }

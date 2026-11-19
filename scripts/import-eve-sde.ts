@@ -1,227 +1,219 @@
-import dotenv from "dotenv"
-import path from "path"
-import fs from "fs"
-import YAML from "yaml"
-
-import { createClient } from "@supabase/supabase-js"
+import dotenv from "dotenv";
+import path from "path";
+import fs from "fs";
+import YAML from "yaml";
+import { createClient } from "@supabase/supabase-js";
 
 dotenv.config({
-  path: path.resolve(
-    process.cwd(),
-    ".env.local"
-  )
-})
+  path: path.resolve(process.cwd(), ".env.local")
+});
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE!
-)
+);
 
-const races: Record<number, string> = {
-
-  // Empire Factions
-
-  1: "Caldari State",
-
-  2: "Minmatar Republic",
-
-  4: "Amarr Empire",
-
-  8: "Gallente Federation",
-
-  // Independent & NPC
-
-  16: "Society of Conscious Thought",
-
-  32: "Sansha's Nation",
-
-  128: "ORE",
-
-  135: "Triglavian Collective",
-
-  168: "EDENCOM"
-
+function loadYaml(file: string) {
+  return YAML.parse(
+    fs.readFileSync(
+      path.resolve(
+        process.cwd(),
+        "sde",
+        "fsd",
+        file
+      ),
+      "utf8"
+    )
+  );
 }
 
-const specialFactions: Record<string, string> = {
+function getDogmaValue(
+  attrs: any[],
+  attributeId: number
+): number | null {
 
-  // Mordu's Legion
+  const found = attrs?.find(
+    (a) =>
+      a.attributeID === attributeId
+  );
 
-  "Garmur": "Mordu's Legion",
-  "Orthrus": "Mordu's Legion",
-  "Barghest": "Mordu's Legion",
-
-  "Cobra": "Mordu's Legion",
-  "Python": "Mordu's Legion",
-  "Sidewinder": "Mordu's Legion",
-
-  // Sisters of EVE
-
-  "Astero": "Sisters of EVE",
-  "Stratios": "Sisters of EVE",
-  "Nestor": "Sisters of EVE",
-
-  // Deathless Circle
-
-  "Alligator": "Deathless Circle",
-  "Warden": "Deathless Circle",
-  "Cenotaph": "Deathless Circle",
-
-  // CONCORD
-
-  "Pacifier": "CONCORD",
-  "Enforcer": "CONCORD",
-  "Marshal": "CONCORD",
-  "Monitor": "CONCORD",
-
-  "Concord Army Battleship": "CONCORD",
-  "Concord Army Frigate": "CONCORD",
-
-  "Concord Police Battleship": "CONCORD",
-  "Concord Police Cruiser": "CONCORD",
-  "Concord Police Frigate": "CONCORD",
-
-  "Concord Special Ops Battleship": "CONCORD",
-  "Concord Special Ops Frigate": "CONCORD",
-
-  "Concord SWAT Battleship": "CONCORD",
-  "Concord SWAT Frigate": "CONCORD",
-
-  "Council Diplomatic Shuttle": "CONCORD"
-
+  return found?.value ?? null;
 }
 
 function determineTechLevel(
-  name?: string
+  ship: any
 ) {
 
-  const shipName =
-    name ?? ""
+  switch (ship.techLevel) {
 
-  if (
-    shipName.includes("II")
-  ) {
-    return "Tech II"
-  }
+    case 1:
+      return "Tech I";
 
-  return "Tech I"
+    case 2:
+      return "Tech II";
 
-}
-
-function determineRole(
-  group?: string
-) {
-
-  switch (group) {
-
-    case "Frigate":
-      return "Light Combat"
-
-    case "Destroyer":
-      return "Fast Combat"
-
-    case "Cruiser":
-      return "Medium Combat"
-
-    case "Battlecruiser":
-      return "Heavy Combat"
-
-    case "Combat Battlecruiser":
-      return "Heavy Combat"
-
-    case "Battleship":
-      return "Line Combat"
-
-    case "Industrial Command Ship":
-      return "Mining Support"
-
-    case "Capital Industrial Ship":
-      return "Industrial Core"
-
-    case "Mining Barge":
-      return "Mining"
-
-    case "Exhumer":
-      return "Advanced Mining"
-
-    case "Freighter":
-      return "Logistics"
+    case 3:
+      return "Tech III";
 
     default:
-      return null
-
+      return "Special";
   }
-
 }
+
+const CAPITAL_GROUPS = new Set([
+  "Carrier",
+  "Dreadnought",
+  "Force Auxiliary",
+  "Supercarrier",
+  "Titan",
+  "Freighter",
+  "Jump Freighter",
+  "Capital Industrial Ship"
+]);
+
+const INDUSTRIAL_GROUPS = new Set([
+  "Industrial",
+  "Transport Ship",
+  "Deep Space Transport",
+  "Blockade Runner",
+  "Mining Barge",
+  "Exhumer",
+  "Industrial Command Ship",
+  "Capital Industrial Ship"
+]);
 
 async function importShips() {
 
-  console.log("Loading SDE...")
+  console.log(
+    "Loading SDE..."
+  );
 
-  const types = YAML.parse(
-    fs.readFileSync(
-      "./sde/fsd/types.yaml",
-      "utf8"
-    )
-  )
+  const types =
+    loadYaml("types.yaml");
 
-  const groups = YAML.parse(
-    fs.readFileSync(
-      "./sde/fsd/groups.yaml",
-      "utf8"
-    )
-  )
+  const groups =
+    loadYaml("groups.yaml");
 
-  let imported = 0
+  const races =
+    loadYaml("races.yaml");
+
+  const factions =
+    loadYaml("factions.yaml");
+
+  const marketGroups =
+    loadYaml("marketGroups.yaml");
+
+  const blueprints =
+    loadYaml("blueprints.yaml");
+
+  const typeDogma =
+    loadYaml("typeDogma.yaml");
+
+  console.log(
+    "Building blueprint lookup..."
+  );
+
+  const blueprintLookup =
+    new Map<number, number>();
 
   for (
-    const [typeId, type]
-    of Object.entries(types)
+    const blueprint of Object.values<any>(
+      blueprints
+    )
   ) {
 
-    const ship: any = type
+    const products =
+      blueprint.activities
+        ?.manufacturing
+        ?.products;
+
+    if (!products) continue;
+
+    for (
+      const product of products
+    ) {
+
+      blueprintLookup.set(
+        product.typeID,
+        blueprint.blueprintTypeID
+      );
+    }
+  }
+
+  let imported = 0;
+
+  for (
+    const [typeId, rawType]
+    of Object.entries<any>(
+      types
+    )
+  ) {
+
+    const ship = rawType;
+
+    if (!ship.published)
+      continue;
 
     const group =
-      groups[ship.groupID]
+      groups[ship.groupID];
 
-    if (!group) {
-      continue
-    }
-
-    // Only ships
+    if (!group)
+      continue;
 
     if (
       group.categoryID !== 6
     ) {
-      continue
+      continue;
     }
 
     const shipName =
-      ship.name?.en ?? null
+      ship.name?.en ??
+      null;
 
     const groupName =
-      group.name?.en ?? null
+      group.name?.en ??
+      null;
+
+    const race =
+      races[
+        ship.raceID
+      ]?.name?.en ??
+      null;
 
     const faction =
-      specialFactions[
-        shipName
-      ]
-      ??
-      (
-        ship.raceID
-          ? races[
-              ship.raceID
-            ]
-          : undefined
-      )
-      ??
-      "Unknown"
+      factions[
+        ship.factionID
+      ]?.name?.en ??
+      race ??
+      null;
 
-    const factionLogo =
-      faction
-        .toLowerCase()
-        .replaceAll("'", "")
-        .replaceAll(" ", "-")
+    const marketGroup =
+      marketGroups[
+        ship.marketGroupID
+      ];
+
+    const marketGroupName =
+      marketGroup?.name?.en ??
+      null;
+
+    const dogma =
+      typeDogma[
+        Number(typeId)
+      ];
+
+    const attrs =
+      dogma?.dogmaAttributes
+      ?? [];
+
+    const buildable =
+      blueprintLookup.has(
+        Number(typeId)
+      );
+
+    const blueprintTypeId =
+      blueprintLookup.get(
+        Number(typeId)
+      ) ?? null;
 
     const record = {
 
@@ -235,12 +227,28 @@ async function importShips() {
         ship.description?.en
         ?? null,
 
+      faction,
+
+      race,
+
+      market_group:
+        marketGroupName,
+
+      market_group_name:
+        marketGroupName,
+
+      group_name:
+        groupName,
+
+      hull_class:
+        groupName,
+
       group_id:
         ship.groupID
         ?? null,
 
-      group_name:
-        groupName,
+      category:
+        "Ship",
 
       category_id:
         group.categoryID
@@ -250,32 +258,96 @@ async function importShips() {
         ship.raceID
         ?? null,
 
-      faction,
-
-      faction_logo:
-        `/factions/${factionLogo}.png`,
-
-      hull_class:
-        groupName,
-
       tech_level:
         determineTechLevel(
-          shipName
+          ship
         ),
 
-      role:
-        determineRole(
-          groupName
-        ),
+      npc_faction:
+        faction,
+
+      buildable,
+
+      blueprint_type_id:
+        blueprintTypeId,
+
+      player_ownable:
+        ship.published,
 
       image_url:
         `https://images.evetech.net/types/${typeId}/render?size=512`,
 
+      market_group_id:
+        ship.marketGroupID
+        ?? null,
+
+      high_slots:
+        getDogmaValue(
+          attrs,
+          14
+        ),
+
+      mid_slots:
+        getDogmaValue(
+          attrs,
+          13
+        ),
+
+      low_slots:
+        getDogmaValue(
+          attrs,
+          12
+        ),
+
+      turret_hardpoints:
+        getDogmaValue(
+          attrs,
+          102
+        ),
+
+      launcher_hardpoints:
+        getDogmaValue(
+          attrs,
+          101
+        ),
+
+      shield_hp:
+        getDogmaValue(
+          attrs,
+          263
+        ),
+
+      armor_hp:
+        getDogmaValue(
+          attrs,
+          265
+        ),
+
+      structure_hp:
+        getDogmaValue(
+          attrs,
+          9
+        ),
+
+      cargo_capacity:
+        getDogmaValue(
+          attrs,
+          38
+        ),
+
+      is_capital:
+        CAPITAL_GROUPS.has(
+          groupName
+        ),
+
+      is_industrial:
+        INDUSTRIAL_GROUPS.has(
+          groupName
+        ),
+
       published:
         ship.published
-        ?? false
-
-    }
+    };
 
     const { error } =
       await supabase
@@ -286,27 +358,33 @@ async function importShips() {
             onConflict:
               "type_id"
           }
-        )
+        );
 
     if (error) {
 
       console.error(
         `Failed: ${shipName}`,
         error.message
-      )
+      );
 
-      continue
-
+      continue;
     }
 
-    imported++
+    imported++;
 
+    if (
+      imported % 25 === 0
+    ) {
+
+      console.log(
+        `Imported ${imported}`
+      );
+    }
   }
 
   console.log(
     `Imported ${imported} ships`
-  )
-
+  );
 }
 
 importShips()
@@ -314,15 +392,13 @@ importShips()
 
     console.log(
       "Import complete"
-    )
+    );
 
-    process.exit(0)
-
+    process.exit(0);
   })
   .catch((err) => {
 
-    console.error(err)
+    console.error(err);
 
-    process.exit(1)
-
-  })
+    process.exit(1);
+  });

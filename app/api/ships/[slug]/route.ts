@@ -1,49 +1,47 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE!
-)
+);
 
 export async function GET(
   request: Request,
   {
-    params
+    params,
   }: {
     params: Promise<{
-      slug: string
-    }>
+      slug: string;
+    }>;
   }
 ) {
-
   const { slug } =
-    await params
+    await params;
 
   const {
     data,
-    error
+    error,
   } = await supabase
-    .from("ships")
+    .from("admin_ship_inventory")
     .select("*")
     .eq("slug", slug)
-    .single()
+    .single();
 
   if (error) {
 
     return NextResponse.json(
       {
-        error: error.message
+        error: error.message,
       },
       {
-        status: 404
+        status: 404,
       }
-    )
+    );
 
   }
 
   return NextResponse.json(
     data
-  )
-
+  );
 }

@@ -1,19 +1,19 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE!
-)
+);
 
 export async function GET() {
 
   const { data, error } =
     await supabase
-      .from("ships")
+      .from("admin_ship_inventory")
       .select("*")
       .eq("active", true)
-      .order("name")
+      .order("name");
 
   if (error) {
 
@@ -24,12 +24,11 @@ export async function GET() {
       {
         status: 500
       }
-    )
+    );
 
   }
 
   return NextResponse.json(
     data ?? []
-  )
-
+  );
 }
