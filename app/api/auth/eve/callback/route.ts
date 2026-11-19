@@ -328,8 +328,6 @@ export async function GET(
       sameSite:
         "lax",
       path: "/",
-      maxAge:
-        60 * 60 * 24 * 30
     }
   )
 
@@ -343,8 +341,7 @@ export async function GET(
       sameSite:
         "lax",
       path: "/",
-      maxAge:
-        60 * 60 * 24 * 30
+      
     }
   )
 
@@ -359,8 +356,6 @@ export async function GET(
       sameSite:
         "lax",
       path: "/",
-      maxAge:
-        60 * 60 * 24 * 30
     }
   )
 
